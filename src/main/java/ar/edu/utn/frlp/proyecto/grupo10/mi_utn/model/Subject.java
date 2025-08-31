@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Subjects")
@@ -40,6 +41,8 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "career_id",nullable = false)
     private Career career;
+    @ManyToMany(mappedBy = "subjects")
+    private Set<Professor> professors;
     @CreationTimestamp
     @Column(updatable = false,name = "date")
     private LocalDateTime date;
