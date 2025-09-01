@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +19,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql="UPDATE Professor SET delete_date = current_timestamp WHERE id = ?")
+@SQLRestriction("delete_date IS NULL")
 public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +36,12 @@ public class Professor {
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
     private Set<Subject> subjects;
+
+    @Column(updatable = false,name = "date")
+    private LocalDateTime date;
+    @UpdateTimestamp
+    @Column(name = "update_date")
+    private LocalDateTime dateUpdate;
+    @Column(name="delete_date")
+    private LocalDateTime dateDeleted;
 }
