@@ -27,7 +27,7 @@ public class SubjectDTO {
     private Integer year;
     private String type;
     private List<ScheduleDTO> schedule;
-    private Career career;
+    private CareerDTO career;
     private Set<ProfessorDTO> professors;
     private LocalDateTime date;
     private LocalDateTime dateUpdate;

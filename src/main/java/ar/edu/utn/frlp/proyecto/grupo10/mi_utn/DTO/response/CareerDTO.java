@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarrerDTO {
+public class CareerDTO {
     private Long id;
     private String name;
     private LocalDateTime date;
