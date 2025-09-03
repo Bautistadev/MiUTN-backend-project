@@ -1,15 +1,9 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers;
 
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.CareerDTO;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.ProfessorDTO;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.ScheduleDTO;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectDTO;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.*;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.SubjectMapper;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Career;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Professor;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Schedule;
-import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Subject;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,10 +24,15 @@ public class SubjectMapperImp implements SubjectMapper {
                 .stream().map(e-> Professor.builder().id(e.getId()).build())
                 .collect(Collectors.toSet());
 
+        Commission commission = Commission.builder()
+                .id(subjectDTO.getCommission().getId())
+                .name(subjectDTO.getCommission().getName())
+                .build();
+
         return Subject.builder()
                 .id(subjectDTO.getId())
                 .name(subjectDTO.getName())
-                .commission(subjectDTO.getCommission())
+                .commission(commission)
                 .year(subjectDTO.getYear())
                 .type(subjectDTO.getType())
                 .schedule(schedules)
@@ -56,7 +55,7 @@ public class SubjectMapperImp implements SubjectMapper {
 
         return Subject.builder()
                 .name(subjectRequestDTO.getName())
-                .commission(subjectRequestDTO.getCommission())
+                .commission(Commission.builder().id(subjectRequestDTO.getCommissionId()).build())
                 .year(subjectRequestDTO.getYear())
                 .type(subjectRequestDTO.getType())
                 .schedule(scheduleDTO)
@@ -96,10 +95,15 @@ public class SubjectMapperImp implements SubjectMapper {
                         .build())
                 .collect(Collectors.toSet());
 
+        CommissionDTO commissionDTO = CommissionDTO.builder()
+                .id(subject.getCommission().getId())
+                .name(subject.getCommission().getName())
+                .build();
+
         return SubjectDTO.builder()
                 .id(subject.getId())
                 .name(subject.getName())
-                .commission(subject.getCommission())
+                .commission(commissionDTO)
                 .year(subject.getYear())
                 .type(subject.getType())
                 .schedule(schedules)

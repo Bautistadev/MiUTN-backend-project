@@ -20,7 +20,7 @@ public class SubjectRequestDTO {
     @NotBlank
     private String name;
     @NotBlank
-    private String commission;
+    private Long commissionId;
     @NotBlank
     private Integer year;
     @NotBlank

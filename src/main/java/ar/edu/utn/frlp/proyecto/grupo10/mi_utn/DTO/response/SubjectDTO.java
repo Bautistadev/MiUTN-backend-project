@@ -23,7 +23,7 @@ import java.util.Set;
 public class SubjectDTO {
     private Long id;
     private String name;
-    private String commission;
+    private CommissionDTO commission;
     private Integer year;
     private String type;
     private List<ScheduleDTO> schedule;

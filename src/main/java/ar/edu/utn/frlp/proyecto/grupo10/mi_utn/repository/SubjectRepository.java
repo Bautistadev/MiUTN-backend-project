@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject,Long> {
-    public List<Subject> findByCommission(String commission);
-    public Page<Subject> findByCommission(String commission, Pageable pageable);
+    public Boolean existsByName(String name);
+    public Optional<Subject> findByName(String name);
+    public List<Subject> findByCommissionId(Long commissionId);
+    public Page<Subject> findByCommissionId(Long commissionId, Pageable pageable);
     public List<Subject> findByYear(Integer year);
     public Page<Subject> findByYear(Integer year,Pageable pageable);
     public List<Subject> findByType(String type);
