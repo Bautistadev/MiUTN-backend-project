@@ -21,16 +21,5 @@ public class SwaggerConfig {
                 .build();
     }
 
-    @Bean
-    public OpenAPI springOpenApi() {
-        return new OpenAPI()
-                .components(new Components().addSecuritySchemes("bearer-jwt",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("Bearer").bearerFormat("JWT")))
-                .addSecurityItem(new SecurityRequirement().addList("bearer-jwt"))
-                .info(new Info().title("MiUTN - Proyecto final - Grupo 10")
-                        .contact(new Contact().name("Bautista Basilio").email("BautistaBasilioDev@outlook.com"))
-                        .version("1.0")
-                        .description(""));
-    }
 
 }
