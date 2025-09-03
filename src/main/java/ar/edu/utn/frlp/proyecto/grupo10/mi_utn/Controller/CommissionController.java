@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/MiUTN/commission")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class CommissionController {
 
     private CommissionService commissionService;

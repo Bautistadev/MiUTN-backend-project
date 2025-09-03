@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/MiUTN/subject")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class SubjectController {
 
     private SubjectService subjectService;

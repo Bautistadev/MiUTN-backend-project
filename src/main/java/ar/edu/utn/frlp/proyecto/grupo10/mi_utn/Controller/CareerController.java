@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/MiUTN/career")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class CareerController{
 
     private CareerService careerService;
