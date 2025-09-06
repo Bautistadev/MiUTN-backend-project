@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/MiUTN/career")
@@ -54,4 +55,18 @@ public class CareerController{
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(this.careerService.findById(id));
     }
 
+    @GetMapping("/")
+    public ResponseEntity<Map<Long, String>> findAll() {
+        Map<Long, String> careers = careerService.findAll();
+
+        if (careers.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(careers);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(careers);
+    }
 }

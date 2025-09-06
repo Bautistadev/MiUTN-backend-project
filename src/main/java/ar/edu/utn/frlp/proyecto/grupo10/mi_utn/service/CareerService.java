@@ -11,10 +11,11 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.CareerServiceCon
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -77,5 +78,16 @@ public class CareerService implements CareerServiceContract {
         }
         Pageable pageable = PageRequest.of(from,to);
         return this.careerRepository.findAll(pageable).stream().map(careerMapper::toDTO).toList();
+    }
+
+    @Override
+    public Map<Long, String> findAll() {
+        List<Career> careers = careerRepository.findAll();
+        return careers.stream()
+                .collect(
+                        Collectors.toMap(
+                                Career::getId,
+                                Career::getName
+                        ));
     }
 }
