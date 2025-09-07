@@ -1,10 +1,7 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,12 +26,14 @@ public class Professor {
     private String name;
     @Column(name = "lastname",nullable = false)
     private String lastname;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "professor_subject",
             joinColumns = @JoinColumn(name = "professor_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Subject> subjects;
 
     @Column(updatable = false,name = "date")

@@ -15,8 +15,8 @@ import java.util.Optional;
 public interface SubjectRepository extends JpaRepository<Subject,Long> {
     public Boolean existsByName(String name);
     public Optional<Subject> findByName(String name);
-    public List<Subject> findByCommissionId(Long commissionId);
-    public Page<Subject> findByCommissionId(Long commissionId, Pageable pageable);
+    List<Subject> findByScheduleCommissionId(Long commissionId);
+    Page<Subject> findByScheduleCommissionId(Long commissionId,Pageable pageable);
     public List<Subject> findByYear(Integer year);
     public Page<Subject> findByYear(Integer year,Pageable pageable);
     public List<Subject> findByType(String type);

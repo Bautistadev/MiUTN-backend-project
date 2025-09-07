@@ -1,10 +1,7 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.java.Log;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -30,9 +27,6 @@ public class Subject {
     private Long id;
     @Column(name = "name",nullable = false)
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "commission_id",nullable = false)
-    private Commission commission;
     @Column(name = "year",nullable = false)
     private Integer year;
     @Column(name = "type",nullable = false)
@@ -42,7 +36,9 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "career_id",nullable = false)
     private Career career;
-    @ManyToMany(mappedBy = "subjects")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "subjects",fetch = FetchType.EAGER)
     private Set<Professor> professors;
     @CreationTimestamp
     @Column(updatable = false,name = "date")

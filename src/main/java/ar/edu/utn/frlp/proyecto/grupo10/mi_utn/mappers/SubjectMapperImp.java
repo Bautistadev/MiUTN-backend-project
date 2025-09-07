@@ -29,7 +29,7 @@ public class SubjectMapperImp implements SubjectMapper {
                 .name(subjectDTO.getCommission().getName())
                 .build();
 
-        return Subject.builder()
+        /*return Subject.builder()
                 .id(subjectDTO.getId())
                 .name(subjectDTO.getName())
                 .commission(commission)
@@ -38,7 +38,9 @@ public class SubjectMapperImp implements SubjectMapper {
                 .schedule(schedules)
                 .career(Career.builder().id(subjectDTO.getId()).build())
                 .professors(professors)
-                .build();
+                .build();*/
+
+        return null;
     }
 
     @Override
@@ -53,13 +55,13 @@ public class SubjectMapperImp implements SubjectMapper {
                         .build())
                 .toList();
 
-        return Subject.builder()
+        return null;/*Subject.builder()
                 .name(subjectRequestDTO.getName())
                 .commission(Commission.builder().id(subjectRequestDTO.getCommissionId()).build())
                 .year(subjectRequestDTO.getYear())
                 .type(subjectRequestDTO.getType())
                 .schedule(scheduleDTO)
-                .build();
+                .build();*/
     }
 
     @Override
@@ -96,8 +98,6 @@ public class SubjectMapperImp implements SubjectMapper {
                 .collect(Collectors.toSet());
 
         CommissionDTO commissionDTO = CommissionDTO.builder()
-                .id(subject.getCommission().getId())
-                .name(subject.getCommission().getName())
                 .build();
 
         return SubjectDTO.builder()

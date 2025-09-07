@@ -28,12 +28,17 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id") // FK en schedules
     private Subject subject;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commission_id") // FK en schedules
+    private Commission commission;
     @Column(name = "day",nullable = false)
     private String day;
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
+    @Column(name = "classroom",nullable = false)
+    private String classroom;
     @Column(updatable = false,name = "date")
     private LocalDateTime date;
     @UpdateTimestamp

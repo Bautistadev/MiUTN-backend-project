@@ -1,10 +1,15 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service;
 
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.ScheduleMapDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectDTO;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectMapDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.BadRequestException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.ConflictException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.SubjectMapper;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Professor;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Schedule;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Subject;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CommissionRespository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.SubjectRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.SubjectServiceContract;
@@ -15,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -107,10 +115,10 @@ public class SubjectService implements SubjectServiceContract {
     @Override
     public List<SubjectDTO> findByCommissionId(Long commissionId, Integer from, Integer to) {
         if((from == null || from == 0) && (to == null || to == 0))
-            return this.subjectRepository.findByCommissionId(commissionId).stream().map(subjectMapper::toDTO).toList();
+            return this.subjectRepository.findByScheduleCommissionId(commissionId).stream().map(subjectMapper::toDTO).toList();
         if(from == null || from == 0){
             Pageable pageable = PageRequest.of(0,to);
-            return this.subjectRepository.findByCommissionId(commissionId,pageable).stream().map(subjectMapper::toDTO).toList();
+            return this.subjectRepository.findByScheduleCommissionId(commissionId,pageable).stream().map(subjectMapper::toDTO).toList();
         }
         Pageable pageable = PageRequest.of(from,to);
         return this.subjectRepository.findByCareerId(commissionId,pageable).stream().map(subjectMapper::toDTO).toList();
@@ -171,4 +179,30 @@ public class SubjectService implements SubjectServiceContract {
     }
 
 
+    public Map<Long,SubjectMapDTO> findAll(){
+        return subjectRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        Subject::getId,
+                        materia -> new SubjectMapDTO(
+                                materia.getName(),
+                                // horarios -> stream directo
+                                materia.getSchedule().stream()
+                                        .map(h -> new ScheduleMapDTO(
+                                                h.getDay(),
+                                                h.getStartTime() + "-" + h.getEndTime()
+                                        ))
+                                        .toList(),
+                                // aula -> tomo del primero o null
+                                materia.getSchedule().stream()
+                                        .findFirst()
+                                        .map(Schedule::getClassroom)
+                                        .orElse(null),
+                                // profesor -> tomo el primero o null
+                                materia.getProfessors().stream()
+                                        .findFirst()
+                                        .map(Professor::getName)
+                                        .orElse(null)
+                        )
+                ));
+    }
 }

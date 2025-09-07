@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.autoconfigure.graphql.ConditionalOnGraphQlSchema;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "commissions")
@@ -29,7 +30,8 @@ public class Commission {
 
     @Column(name = "name",nullable = false)
     private String name;
-
+    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedule;
     @CreationTimestamp
     @Column(updatable = false,name = "date")
     private LocalDateTime date;

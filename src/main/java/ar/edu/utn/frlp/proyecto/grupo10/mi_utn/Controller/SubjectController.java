@@ -2,6 +2,7 @@ package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.Controller;
 
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectDTO;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectMapDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.BadRequestException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.SubjectService;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/MiUTN/subject")
@@ -22,6 +24,12 @@ import java.util.List;
 public class SubjectController {
 
     private SubjectService subjectService;
+
+    @GetMapping("/")
+    public ResponseEntity<Map<Long, SubjectMapDTO>> findAllMap(){
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
+                .body(this.subjectService.findAll());
+    }
 
     @GetMapping("/findById")
     public ResponseEntity<SubjectDTO> findById(@RequestParam Long id) throws BadRequestException {
