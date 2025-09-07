@@ -200,7 +200,7 @@ public class SubjectService implements SubjectServiceContract {
                                 // profesor -> tomo el primero o null
                                 materia.getProfessors().stream()
                                         .findFirst()
-                                        .map(Professor::getName)
+                                        .map(e->e.getName() + " " + e.getLastname() )
                                         .orElse(null)
                         )
                 ));
