@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,8 @@ public class SubjectService implements SubjectServiceContract {
     private ProfessorService professorService;
     private CommissionRespository commissionRespository;
     private CareerService careerService;
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 
     @Override
@@ -176,26 +179,30 @@ public class SubjectService implements SubjectServiceContract {
         return this.subjectRepository.findByName(name).map(this.subjectMapper::toDTO).orElseThrow(BadRequestException::new);
     }
 
-    public List<SubjectMapDTO> findAll() {
-        return subjectRepository.findAll().stream()
-                .map(this::mapToSubjectDTO)
+    public List<SubjectMapDTO> getSubjectsByCareerYearAndCommission(
+            String careerName, Integer year, String commissionName) {
+
+        return subjectRepository
+                .findByCareerNameYearAndCommissionName(careerName, year, commissionName)
+                .stream()
+                .map(subject -> mapToSubjectDTO(subject, commissionName))
                 .toList();
     }
-
     // -------------------------
     // Métodos privados de mapeo
     // -------------------------
-
-    private SubjectMapDTO mapToSubjectDTO(Subject subject) {
+    private SubjectMapDTO mapToSubjectDTO(Subject subject, String commissionName) {
         return SubjectMapDTO.builder()
                 .id(subject.getId())
                 .name(subject.getName())
-                .commissions(buildCommissions(subject.getSchedule()))
+                .commissions(buildCommissions(subject.getSchedule(), commissionName))
                 .build();
     }
 
-    private List<commissionMapDTO> buildCommissions(List<Schedule> schedules) {
+    private List<commissionMapDTO> buildCommissions(List<Schedule> schedules, String commissionName) {
+        // Filtrar schedules por la comisión que nos interesa
         return schedules.stream()
+                .filter(s -> s.getCommission() != null && s.getCommission().getName().equals(commissionName))
                 .collect(Collectors.groupingBy(Schedule::getCommission))
                 .entrySet().stream()
                 .map(entry -> mapToCommissionDTO(entry.getKey(), entry.getValue()))
@@ -220,7 +227,11 @@ public class SubjectService implements SubjectServiceContract {
 
     private String extractProfesor(List<Schedule> schedules) {
         return schedules.stream()
-                .map(s -> s.getProfessor().getName() + " " + s.getProfessor().getLastname())
+                .map(s -> {
+                    if (s.getProfessor() != null)
+                        return s.getProfessor().getName() + " " + s.getProfessor().getLastname();
+                    return "Sin Profesor";
+                })
                 .findFirst()
                 .orElse("Sin Profesor");
     }
@@ -229,7 +240,7 @@ public class SubjectService implements SubjectServiceContract {
         return schedules.stream()
                 .map(s -> ScheduleMapDTO.builder()
                         .day(s.getDay())
-                        .time(s.getStartTime() + "-" + s.getEndTime())
+                        .time(s.getStartTime().format(TIME_FORMATTER) + "-" + s.getEndTime().format(TIME_FORMATTER))
                         .classroom(s.getClassroom())
                         .build())
                 .toList();
