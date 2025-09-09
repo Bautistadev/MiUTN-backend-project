@@ -31,6 +31,9 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_id") // FK en schedules
     private Commission commission;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_id") // FK en schedules
+    private Professor professor;
     @Column(name = "day",nullable = false)
     private String day;
     @Column(name = "start_time", nullable = false)

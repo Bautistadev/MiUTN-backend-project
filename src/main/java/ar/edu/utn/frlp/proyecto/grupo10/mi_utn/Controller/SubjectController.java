@@ -26,7 +26,7 @@ public class SubjectController {
     private SubjectService subjectService;
 
     @GetMapping("/")
-    public ResponseEntity<Map<Long, SubjectMapDTO>> findAllMap(){
+    public ResponseEntity<List< SubjectMapDTO>> findAllMap(){
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
                 .body(this.subjectService.findAll());
     }

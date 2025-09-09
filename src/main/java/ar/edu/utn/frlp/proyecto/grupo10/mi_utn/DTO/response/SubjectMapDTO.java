@@ -12,8 +12,7 @@ import java.util.List;
 @Builder
 @Data
 public class SubjectMapDTO {
+    private Long id;
     private String name;
-    private List<ScheduleMapDTO> scheduleMapDTO;
-    private String classRoom;
-    private String professor;
+    private List<commissionMapDTO> commissions;
 }

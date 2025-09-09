@@ -36,6 +36,11 @@ public class Professor {
     @EqualsAndHashCode.Exclude
     private Set<Subject> subjects;
 
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Schedule> schedules;
+
     @Column(updatable = false,name = "date")
     private LocalDateTime date;
     @UpdateTimestamp

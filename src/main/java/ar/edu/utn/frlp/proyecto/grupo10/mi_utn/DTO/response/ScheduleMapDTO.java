@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ScheduleMapDTO {
     private String day;
-    private String time;
+    private String time;   // "08:00-10:00"
+    private String classroom;
 }

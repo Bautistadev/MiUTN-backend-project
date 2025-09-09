@@ -4,6 +4,7 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.*;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.SubjectMapper;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,7 +12,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class SubjectMapperImp implements SubjectMapper {
+
+    private CommissionMapperImp commissionMapperImp;
+
+
     @Override
     public Subject toEntity(SubjectDTO subjectDTO) {
 
@@ -23,11 +29,6 @@ public class SubjectMapperImp implements SubjectMapper {
         Set<Professor> professors =  subjectDTO.getProfessors()
                 .stream().map(e-> Professor.builder().id(e.getId()).build())
                 .collect(Collectors.toSet());
-
-        Commission commission = Commission.builder()
-                .id(subjectDTO.getCommission().getId())
-                .name(subjectDTO.getCommission().getName())
-                .build();
 
         /*return Subject.builder()
                 .id(subjectDTO.getId())
@@ -73,6 +74,7 @@ public class SubjectMapperImp implements SubjectMapper {
                         .dateUpdate(e.getDateUpdate())
                         .dateDeleted(e.getDateDeleted())
                         .day(e.getDay())
+                        .commission(this.commissionMapperImp.toDTO(e.getCommission()))
                         .endTime(e.getEndTime())
                         .startTime(e.getStartTime())
                         .build())
@@ -97,13 +99,11 @@ public class SubjectMapperImp implements SubjectMapper {
                         .build())
                 .collect(Collectors.toSet());
 
-        CommissionDTO commissionDTO = CommissionDTO.builder()
-                .build();
+
 
         return SubjectDTO.builder()
                 .id(subject.getId())
                 .name(subject.getName())
-                .commission(commissionDTO)
                 .year(subject.getYear())
                 .type(subject.getType())
                 .schedule(schedules)

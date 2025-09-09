@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class ScheduleDTO {
     private Long id;// FK en schedules
-    private Subject subject;
+    private CommissionDTO commission;
     private String day;
     private LocalTime startTime;
     private LocalTime endTime;
