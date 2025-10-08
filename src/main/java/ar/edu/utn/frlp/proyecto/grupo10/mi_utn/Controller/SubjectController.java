@@ -25,10 +25,19 @@ public class SubjectController {
 
     private SubjectService subjectService;
 
-    @GetMapping("/")
-    public ResponseEntity<Map<Long, SubjectMapDTO>> findAllMap(){
+   /* @GetMapping("/")
+    public ResponseEntity<List< SubjectMapDTO>> findAllMap(){
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
                 .body(this.subjectService.findAll());
+    }*/
+
+    @GetMapping("/filtered")
+    public ResponseEntity<List<SubjectMapDTO>> getSubjects(
+            @RequestParam String careerName,
+            @RequestParam Integer year,
+            @RequestParam String commissionName) {
+        List<SubjectMapDTO> subjects = subjectService.getSubjectsByCareerYearAndCommission(careerName, year, commissionName);
+        return ResponseEntity.ok(subjects);
     }
 
     @GetMapping("/findById")

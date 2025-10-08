@@ -4,9 +4,11 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.ScheduleMapDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.SubjectMapDTO;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.commissionMapDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.BadRequestException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.ConflictException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.SubjectMapper;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Commission;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Professor;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Schedule;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Subject;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +37,8 @@ public class SubjectService implements SubjectServiceContract {
     private ProfessorService professorService;
     private CommissionRespository commissionRespository;
     private CareerService careerService;
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 
     @Override
@@ -92,10 +97,6 @@ public class SubjectService implements SubjectServiceContract {
                 .ifPresent(invalid->{
                     throw new IllegalArgumentException("Profesor no existente id: "+ invalid);
                 });
-
-        //VALIDAMOS QUE EXISTA LA COMISION
-        if(!this.commissionRespository.existsById(subjectDTO.getCommission().getId()))
-            throw new ConflictException("Comision no existente");
 
         //VALIDAMOS QUIE EXISTA LA CARRERA
         if(!this.careerService.existsById(subjectDTO.getCareer().getId()))
@@ -178,31 +179,70 @@ public class SubjectService implements SubjectServiceContract {
         return this.subjectRepository.findByName(name).map(this.subjectMapper::toDTO).orElseThrow(BadRequestException::new);
     }
 
+    public List<SubjectMapDTO> getSubjectsByCareerYearAndCommission(
+            String careerName, Integer year, String commissionName) {
 
-    public Map<Long,SubjectMapDTO> findAll(){
-        return subjectRepository.findAll().stream()
-                .collect(Collectors.toMap(
-                        Subject::getId,
-                        materia -> new SubjectMapDTO(
-                                materia.getName(),
-                                // horarios -> stream directo
-                                materia.getSchedule().stream()
-                                        .map(h -> new ScheduleMapDTO(
-                                                h.getDay(),
-                                                h.getStartTime() + "-" + h.getEndTime()
-                                        ))
-                                        .toList(),
-                                // aula -> tomo del primero o null
-                                materia.getSchedule().stream()
-                                        .findFirst()
-                                        .map(Schedule::getClassroom)
-                                        .orElse(null),
-                                // profesor -> tomo el primero o null
-                                materia.getProfessors().stream()
-                                        .findFirst()
-                                        .map(e->e.getName() + " " + e.getLastname() )
-                                        .orElse(null)
-                        )
-                ));
+        return subjectRepository
+                .findByCareerNameYearAndCommissionName(careerName, year, commissionName)
+                .stream()
+                .map(subject -> mapToSubjectDTO(subject, commissionName))
+                .toList();
+    }
+    // -------------------------
+    // Métodos privados de mapeo
+    // -------------------------
+    private SubjectMapDTO mapToSubjectDTO(Subject subject, String commissionName) {
+        return SubjectMapDTO.builder()
+                .id(subject.getId())
+                .name(subject.getName())
+                .commissions(buildCommissions(subject.getSchedule(), commissionName))
+                .build();
+    }
+
+    private List<commissionMapDTO> buildCommissions(List<Schedule> schedules, String commissionName) {
+        // Filtrar schedules por la comisión que nos interesa
+        return schedules.stream()
+                .filter(s -> s.getCommission() != null && s.getCommission().getName().equals(commissionName))
+                .collect(Collectors.groupingBy(Schedule::getCommission))
+                .entrySet().stream()
+                .map(entry -> mapToCommissionDTO(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    private commissionMapDTO mapToCommissionDTO(Commission commission, List<Schedule> schedules) {
+        return commissionMapDTO.builder()
+                .commission(commission.getName())
+                .classroom(extractAula(schedules))
+                .professor(extractProfesor(schedules))
+                .dates(buildSchedules(schedules))
+                .build();
+    }
+
+    private String extractAula(List<Schedule> schedules) {
+        return schedules.stream()
+                .map(Schedule::getClassroom)
+                .findFirst()
+                .orElse("Sin Aula");
+    }
+
+    private String extractProfesor(List<Schedule> schedules) {
+        return schedules.stream()
+                .map(s -> {
+                    if (s.getProfessor() != null)
+                        return s.getProfessor().getName() + " " + s.getProfessor().getLastname();
+                    return "Sin Profesor";
+                })
+                .findFirst()
+                .orElse("Sin Profesor");
+    }
+
+    private List<ScheduleMapDTO> buildSchedules(List<Schedule> schedules) {
+        return schedules.stream()
+                .map(s -> ScheduleMapDTO.builder()
+                        .day(s.getDay())
+                        .time(s.getStartTime().format(TIME_FORMATTER) + "-" + s.getEndTime().format(TIME_FORMATTER))
+                        .classroom(s.getClassroom())
+                        .build())
+                .toList();
     }
 }

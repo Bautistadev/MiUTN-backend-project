@@ -11,8 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-public class SubjectMapDTO {
-    private Long id;
-    private String name;
-    private List<commissionMapDTO> commissions;
+public class commissionMapDTO {
+    private String commission;
+    private String classroom;
+    private String professor;
+    private List<ScheduleMapDTO> dates;
 }
