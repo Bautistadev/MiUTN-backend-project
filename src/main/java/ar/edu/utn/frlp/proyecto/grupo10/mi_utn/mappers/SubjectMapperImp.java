@@ -96,6 +96,7 @@ public class SubjectMapperImp implements SubjectMapper {
                         .date(e.getDate())
                         .dateUpdate(e.getDateUpdate())
                         .dateDeleted(e.getDateDeleted())
+                        .email(e.getEmail())
                         .build())
                 .collect(Collectors.toSet());
 

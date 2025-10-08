@@ -215,6 +215,7 @@ public class SubjectService implements SubjectServiceContract {
                 .classroom(extractAula(schedules))
                 .professor(extractProfesor(schedules))
                 .dates(buildSchedules(schedules))
+                .email(extractProfessorEmail(schedules))
                 .build();
     }
 
@@ -234,6 +235,18 @@ public class SubjectService implements SubjectServiceContract {
                 })
                 .findFirst()
                 .orElse("Sin Profesor");
+    }
+
+    private String extractProfessorEmail(List<Schedule> schedules){
+        return schedules.stream()
+                .map(s -> {
+                    String email = s.getProfessor().getEmail();
+                    if (email != null)
+                        return email;
+                    return "Sin email";
+                })
+                .findFirst()
+                .orElse("Sin email");
     }
 
     private List<ScheduleMapDTO> buildSchedules(List<Schedule> schedules) {

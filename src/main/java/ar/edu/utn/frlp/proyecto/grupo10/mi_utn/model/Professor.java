@@ -48,4 +48,6 @@ public class Professor {
     private LocalDateTime dateUpdate;
     @Column(name="delete_date")
     private LocalDateTime dateDeleted;
+    @Column(name = "email")
+    private String email;
 }
