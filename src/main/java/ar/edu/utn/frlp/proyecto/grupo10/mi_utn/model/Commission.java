@@ -1,45 +1,37 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.extern.java.Log;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.boot.autoconfigure.graphql.ConditionalOnGraphQlSchema;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "Subjects")
+@Table(name = "commissions")
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE Subject SET delete_date = current_timestamp WHERE id = ?")
+@SQLDelete(sql="UPDATE Commssion SET delete_date = current_timestamp WHERE id = ?")
 @SQLRestriction("delete_date IS NULL")
-public class Subject {
+public class Commission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "name",nullable = false)
     private String name;
-    @Column(name = "year",nullable = false)
-    private Integer year;
-    @Column(name = "type",nullable = false)
-    private String type;
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "career_id",nullable = false)
-    private Career career;
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "subjects",fetch = FetchType.EAGER)
-    private Set<Professor> professors;
     @CreationTimestamp
     @Column(updatable = false,name = "date")
     private LocalDateTime date;

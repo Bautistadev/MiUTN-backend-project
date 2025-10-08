@@ -1,11 +1,12 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql="UPDATE Professor SET delete_date = current_timestamp WHERE id = ?")
+@SQLRestriction("delete_date IS NULL")
 public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +26,26 @@ public class Professor {
     private String name;
     @Column(name = "lastname",nullable = false)
     private String lastname;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "professor_subject",
             joinColumns = @JoinColumn(name = "professor_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Subject> subjects;
+
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Schedule> schedules;
+
+    @Column(updatable = false,name = "date")
+    private LocalDateTime date;
+    @UpdateTimestamp
+    @Column(name = "update_date")
+    private LocalDateTime dateUpdate;
+    @Column(name="delete_date")
+    private LocalDateTime dateDeleted;
 }
