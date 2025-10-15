@@ -17,7 +17,4 @@ public class ProfessorDTO {
     private Long id;
     private String name;
     private String lastname;
-    private LocalDateTime date;
-    private LocalDateTime dateUpdate;
-    private LocalDateTime dateDeleted;
 }

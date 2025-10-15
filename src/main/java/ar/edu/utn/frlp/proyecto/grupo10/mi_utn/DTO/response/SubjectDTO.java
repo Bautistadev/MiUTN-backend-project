@@ -28,8 +28,5 @@ public class SubjectDTO {
     private List<ScheduleDTO> schedule;
     private CareerDTO career;
     private Set<ProfessorDTO> professors;
-    private LocalDateTime date;
-    private LocalDateTime dateUpdate;
-    private LocalDateTime dateDeleted;
 
 }
