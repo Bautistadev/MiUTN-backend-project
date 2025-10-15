@@ -16,7 +16,4 @@ import java.time.LocalDateTime;
 public class CommissionDTO {
     private Long id;
     private String name;
-    private LocalDateTime date;
-    private LocalDateTime dateUpdate;
-    private LocalDateTime dateDeleted;
 }

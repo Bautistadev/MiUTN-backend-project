@@ -19,7 +19,4 @@ public class ScheduleDTO {
     private String day;
     private LocalTime startTime;
     private LocalTime endTime;
-    private LocalDateTime date;
-    private LocalDateTime dateUpdate;
-    private LocalDateTime dateDeleted;
 }

@@ -70,9 +70,6 @@ public class SubjectMapperImp implements SubjectMapper {
         List<ScheduleDTO> schedules = subject.getSchedule()
                 .stream().map(e-> ScheduleDTO.builder()
                         .id(e.getId())
-                        .date(e.getDate())
-                        .dateUpdate(e.getDateUpdate())
-                        .dateDeleted(e.getDateDeleted())
                         .day(e.getDay())
                         .commission(this.commissionMapperImp.toDTO(e.getCommission()))
                         .endTime(e.getEndTime())
@@ -83,9 +80,6 @@ public class SubjectMapperImp implements SubjectMapper {
         CareerDTO careerDTO = CareerDTO.builder()
                 .id(subject.getCareer().getId())
                 .name(subject.getCareer().getName())
-                .date(subject.getCareer().getDate())
-                .dateDeleted(subject.getCareer().getDateDeleted())
-                .dateUpdate(subject.getCareer().getDateUpdate())
                 .build();
 
         Set<ProfessorDTO> professorDTOS = subject.getProfessors()
@@ -93,9 +87,6 @@ public class SubjectMapperImp implements SubjectMapper {
                         .id(e.getId())
                         .name(e.getName())
                         .lastname(e.getLastname())
-                        .date(e.getDate())
-                        .dateUpdate(e.getDateUpdate())
-                        .dateDeleted(e.getDateDeleted())
                         .email(e.getEmail())
                         .build())
                 .collect(Collectors.toSet());
