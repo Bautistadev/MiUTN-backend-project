@@ -87,6 +87,7 @@ public class SubjectMapperImp implements SubjectMapper {
                         .id(e.getId())
                         .name(e.getName())
                         .lastname(e.getLastname())
+                        .email(e.getEmail())
                         .build())
                 .collect(Collectors.toSet());
 

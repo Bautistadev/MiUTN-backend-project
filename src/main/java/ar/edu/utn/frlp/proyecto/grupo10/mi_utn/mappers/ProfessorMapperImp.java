@@ -14,6 +14,7 @@ public class ProfessorMapperImp implements ProfessorMapper {
                 .id(professorDTO.getId())
                 .name(professorDTO.getName())
                 .lastname(professorDTO.getLastname())
+                .email(professorDTO.getEmail())
                 .build();
     }
 
@@ -31,6 +32,7 @@ public class ProfessorMapperImp implements ProfessorMapper {
                 .id(profesor.getId())
                 .name(profesor.getName())
                 .lastname(profesor.getLastname())
+                .email(profesor.getEmail())
                 .build();
     }
 }
