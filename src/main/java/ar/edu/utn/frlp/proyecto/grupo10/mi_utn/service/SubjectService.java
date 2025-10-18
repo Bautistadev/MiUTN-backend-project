@@ -80,7 +80,8 @@ public class SubjectService implements SubjectServiceContract {
         if(!this.careerService.existsById(subjectRequestDTO.getCareerId()))
             throw new IllegalArgumentException("Carrera no existente id: "+subjectRequestDTO.getCareerId());
 
-        this.subjectRepository.save(this.subjectMapper.toEntity(subjectRequestDTO));
+        Subject subject = this.subjectMapper.toEntity(subjectRequestDTO);
+        this.subjectRepository.save(subject);
 
     }
 
@@ -116,7 +117,22 @@ public class SubjectService implements SubjectServiceContract {
     @Override
     public List<SubjectDTO> findByCommissionId(Long commissionId, Integer from, Integer to) {
         if((from == null || from == 0) && (to == null || to == 0))
-            return this.subjectRepository.findByScheduleCommissionId(commissionId).stream().map(subjectMapper::toDTO).toList();
+            return this.subjectRepository.findByScheduleCommissionId(commissionId)
+                    .stream()
+                    .map(subjectMapper::toDTO)
+                    .filter(e -> e.getSchedule() != null &&
+                            e.getSchedule().stream()
+                            .anyMatch(i -> i.getCommission() != null &&
+                            i.getCommission().getId().equals(commissionId)))
+                    .map(e -> {
+                        // 🔹 Filtra los horarios dentro de la materia para dejar solo la comisión indicada
+                        e.setSchedule(
+                        e.getSchedule().stream()
+                        .filter(i -> i.getCommission() != null && i.getCommission().getId().equals(commissionId)).toList()
+                        );
+                        return e;
+                    })
+                    .toList();
         if(from == null || from == 0){
             Pageable pageable = PageRequest.of(0,to);
             return this.subjectRepository.findByScheduleCommissionId(commissionId,pageable).stream().map(subjectMapper::toDTO).toList();
