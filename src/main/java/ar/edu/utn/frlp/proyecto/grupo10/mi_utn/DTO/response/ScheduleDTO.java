@@ -17,6 +17,7 @@ public class ScheduleDTO {
     private Long id;// FK en schedules
     private CommissionDTO commission;
     private String day;
+    private String classroom;
     private LocalTime startTime;
     private LocalTime endTime;
 }
