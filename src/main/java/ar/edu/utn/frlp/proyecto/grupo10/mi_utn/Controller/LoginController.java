@@ -27,4 +27,11 @@ public class LoginController {
     public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginDTO userLoginRequestDTO) throws LoginException, UnAuthorizedException, BadRequestException {
         return new ResponseEntity<>(authService.attemptUserPasswordLogin(userLoginRequestDTO.getUsername(),userLoginRequestDTO.getEmail(), userLoginRequestDTO.getPassword()), HttpStatus.OK);
     }
+
+    @PostMapping("/validateToken")
+    @Operation(description = "Login with user and password.", summary = "Login with user and password")
+    public ResponseEntity<Boolean> validateToken(@RequestBody String token){
+        return new ResponseEntity<>(authService.validateToken(token),HttpStatus.OK);
+    }
+
 }

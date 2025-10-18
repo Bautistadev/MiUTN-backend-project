@@ -8,4 +8,5 @@ import javax.security.auth.login.LoginException;
 
 public interface AuthServiceInterface {
     LoginResponseDTO attemptUserPasswordLogin(String user, String email, String password) throws LoginException, UnAuthorizedException, BadRequestException;
+    Boolean validateToken(String token);
 }

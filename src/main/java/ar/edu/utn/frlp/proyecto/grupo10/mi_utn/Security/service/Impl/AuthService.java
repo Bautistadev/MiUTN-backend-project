@@ -44,4 +44,9 @@ public class AuthService implements AuthServiceInterface {
         throw new UnAuthorizedException("User is not authorized");
 
     }
+
+    @Override
+    public Boolean validateToken(String token) {
+        return this.jwtTokenProvider.validateToken(token);
+    }
 }
