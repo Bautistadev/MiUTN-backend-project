@@ -1,5 +1,6 @@
 package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Enum.PublicationMode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 
@@ -32,11 +32,30 @@ public class Publication {
     @Column(name = "description",nullable = false)
     private String description;
 
-    @Column(name = "hidden",nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
+    private String content;
+
+    @Column(name = "hidden", nullable = false)
     private Boolean hidden;
 
-    @Column(name = "image",nullable = false)
+    @Column(name = "priority", nullable = false)
+    private Boolean priority;
+
+    @Column(name = "image")
     private String image;
+
+    @Column(name = "expirable", nullable = false)
+    private Boolean expirable;
+
+    @Column(name = "expiration_date")
+    private LocalDateTime expirationDate;
+
+    @Column(name = "publication_mode", nullable = false)
+    private PublicationMode publicationMode;
+
+    @Column(name = "scheduled_publication_date")
+    private LocalDateTime scheduledDate;
 
     @CreationTimestamp
     @Column(updatable = false,name = "date",nullable = false)
