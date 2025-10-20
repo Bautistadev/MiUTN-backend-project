@@ -16,8 +16,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE Professor SET delete_date = current_timestamp WHERE id = ?")
-@SQLRestriction("delete_date IS NULL")
 public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +38,6 @@ public class Professor {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Schedule> schedules;
-
-    @Column(updatable = false,name = "date")
-    private LocalDateTime date;
-    @UpdateTimestamp
-    @Column(name = "update_date")
-    private LocalDateTime dateUpdate;
-    @Column(name="delete_date")
-    private LocalDateTime dateDeleted;
     @Column(name = "email")
     private String email;
 }

@@ -18,8 +18,6 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE Schedules SET delete_date = current_timestamp WHERE id = ?")
-@SQLRestriction("delete_date IS NULL")
 public class Schedule {
 
     @Id
@@ -42,11 +40,4 @@ public class Schedule {
     private LocalTime endTime;
     @Column(name = "classroom",nullable = false)
     private String classroom;
-    @Column(updatable = false,name = "date")
-    private LocalDateTime date;
-    @UpdateTimestamp
-    @Column(name = "update_date")
-    private LocalDateTime dateUpdate;
-    @Column(name="delete_date")
-    private LocalDateTime dateDeleted;
 }

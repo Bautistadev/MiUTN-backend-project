@@ -13,12 +13,15 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Professor;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Schedule;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Subject;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CommissionRespository;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.SchedulesRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.SubjectRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.SubjectServiceContract;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +37,7 @@ public class SubjectService implements SubjectServiceContract {
 
     private SubjectRepository subjectRepository;
     private SubjectMapper subjectMapper;
+    private SchedulesRepository schedulesRepository;
     private ProfessorService professorService;
     private CommissionRespository commissionRespository;
     private CareerService careerService;
@@ -86,6 +90,7 @@ public class SubjectService implements SubjectServiceContract {
     }
 
     @Override
+    @Transactional
     public void update(SubjectDTO subjectDTO) throws BadRequestException {
         //VALIDAMOS QUE NO EXISTA LA MATERIA
         if(this.subjectRepository.existsByName(subjectDTO.getName()))
@@ -107,10 +112,19 @@ public class SubjectService implements SubjectServiceContract {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) throws BadRequestException {
         if(!this.subjectRepository.existsById(id))
             throw new BadRequestException("Registro no existente");
 
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
+
+        subject.getProfessors().forEach(p -> p.getSubjects().remove(subject));
+        subject.getProfessors().clear();
+
+        subjectRepository.delete(subject);
+        this.schedulesRepository.deleteBySubjectId(id);
         this.subjectRepository.deleteById(id);
     }
 
