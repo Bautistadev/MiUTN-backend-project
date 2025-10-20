@@ -33,7 +33,7 @@ public class Subject {
     private String type;
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id",nullable = false)
     private Career career;
     @ToString.Exclude

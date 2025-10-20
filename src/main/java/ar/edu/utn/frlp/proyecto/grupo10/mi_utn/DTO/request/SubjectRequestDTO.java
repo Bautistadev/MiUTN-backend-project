@@ -17,19 +17,18 @@ import java.util.Set;
 @NoArgsConstructor
 public class SubjectRequestDTO {
 
-    @NotBlank
+
     private String name;
-    @NotBlank
+
     private Long commissionId;
-    @NotBlank
+
     private Integer year;
-    @NotBlank
+
     private String type;
-    @NotBlank
     private List<ScheduleRequestDTO> schedule;
-    @NotBlank
+
     private Long careerId;
-    @NotBlank
+
     private Set<Long> professorsId;
 
 }
