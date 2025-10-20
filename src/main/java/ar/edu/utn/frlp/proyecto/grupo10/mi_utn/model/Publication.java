@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE publications SET delete_date = current_timestamp WHERE id = ?")
-@SQLRestriction("delete_date IS NULL")
 public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,14 +55,4 @@ public class Publication {
     @Column(name = "scheduled_publication_date")
     private LocalDateTime scheduledDate;
 
-    @CreationTimestamp
-    @Column(updatable = false,name = "date",nullable = false)
-    private LocalDateTime date;
-
-    @UpdateTimestamp
-    @Column(name = "update_date")
-    private LocalDateTime dateUpdate;
-
-    @Column(name="delete_date")
-    private LocalDateTime dateDeleted;
 }
