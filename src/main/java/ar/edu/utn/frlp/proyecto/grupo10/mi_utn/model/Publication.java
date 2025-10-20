@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE Publications SET delete_date = current_timestamp WHERE id = ?")
+@SQLDelete(sql="UPDATE publications SET delete_date = current_timestamp WHERE id = ?")
 @SQLRestriction("delete_date IS NULL")
 public class Publication {
     @Id
