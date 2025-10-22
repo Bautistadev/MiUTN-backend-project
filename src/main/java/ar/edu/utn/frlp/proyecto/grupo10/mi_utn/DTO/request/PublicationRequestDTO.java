@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -26,8 +27,9 @@ public class PublicationRequestDTO {
     private Boolean hidden;
     @NotNull
     private Boolean priority;
-    @NotBlank
-    private String image;
+
+    private MultipartFile image;
+
     @NotNull
     private Boolean expirable;
 

@@ -7,6 +7,7 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.PublicationMappe
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Publication;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.PublicationRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.PublicationServiceContract;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class PublicationService implements PublicationServiceContract {
 
     private final PublicationRepository publicationRepository;
+    private final FileStorageService fileStorageService;
     private final PublicationMapper publicationMapper;
 
     @Override
@@ -40,7 +43,13 @@ public class PublicationService implements PublicationServiceContract {
 
     @Override
     public Publication save(PublicationRequestDTO publicationRequestDTO) {
-        return publicationRepository.save(publicationMapper.toEntity(publicationRequestDTO));
+        Publication publication = publicationMapper.toEntity(publicationRequestDTO);
+        if (publicationRequestDTO.getImage() != null && !publicationRequestDTO.getImage().isEmpty()) {
+            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage(), "publication");
+            publication.setImagePath(imagePath);
+        }
+
+        return publicationRepository.save(publication);
     }
 
     @Override
@@ -48,14 +57,30 @@ public class PublicationService implements PublicationServiceContract {
         Long id = publicationRequestDTO.getId();
         if (!publicationRepository.existsById(id))
             throw new BadRequestException(String.format("Anuncio inexistente. Id: %s", id));
-        return publicationRepository.save(publicationMapper.toEntity(publicationRequestDTO));
+        Publication publication = publicationMapper.toEntity(publicationRequestDTO);
+        if (publication.getImagePath() != null) {
+            fileStorageService.deleteImage(publication.getImagePath());
+        }
+
+        if (publicationRequestDTO.getImage() != null && !publicationRequestDTO.getImage().isEmpty()) {
+            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage(), "publication");
+            publication.setImagePath(imagePath);
+        } else {
+            publication.setImagePath(null);
+        }
+
+        return publicationRepository.save(publication);
     }
 
     @Override
     public void delete(Long id) throws BadRequestException {
-        if(!publicationRepository.existsById(id))
-            throw new IllegalArgumentException(String.format("Anuncio inexistente. Id: %s", id));
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() ->  new IllegalArgumentException(String.format("Anuncio inexistente. Id: %s", id)));
 
-        publicationRepository.deleteById(id);
+        if (publication.getImagePath() != null) {
+            fileStorageService.deleteImage(publication.getImagePath());
+        }
+
+        publicationRepository.delete(publication);
     }
 }

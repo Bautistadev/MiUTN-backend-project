@@ -27,7 +27,7 @@ public class PublicationDTO {
     @NotBlank
     private Boolean priority;
     @NotBlank
-    private String image;
+    private String imagePath;
     @NotBlank
     private Boolean expirable;
     @NotBlank

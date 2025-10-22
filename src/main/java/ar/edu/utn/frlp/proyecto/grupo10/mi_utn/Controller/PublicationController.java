@@ -8,6 +8,7 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.PublicationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,8 @@ public class PublicationController {
 
     private final PublicationService publicationService;
 
-    @PostMapping("/save")
-    public ResponseEntity<Publication> save(@RequestBody @Valid PublicationRequestDTO request){
+    @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Publication> save(@ModelAttribute @Valid PublicationRequestDTO request){
         Publication response = publicationService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

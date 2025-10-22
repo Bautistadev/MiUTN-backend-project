@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -40,8 +38,8 @@ public class Publication {
     @Column(name = "priority", nullable = false)
     private Boolean priority;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_path")
+    private String imagePath;
 
     @Column(name = "expirable", nullable = false)
     private Boolean expirable;
@@ -54,5 +52,16 @@ public class Publication {
 
     @Column(name = "scheduled_publication_date")
     private LocalDateTime scheduledDate;
+
+    @CreationTimestamp
+    @Column(updatable = false,name = "date",nullable = false)
+    private LocalDateTime date;
+
+    @UpdateTimestamp
+    @Column(name = "update_date")
+    private LocalDateTime dateUpdate;
+
+    @Column(name="delete_date")
+    private LocalDateTime dateDeleted;
 
 }
