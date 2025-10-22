@@ -27,7 +27,7 @@ public class FileStorageService {
         }
     }
 
-    public String saveImage(MultipartFile image, String originalFilename) {
+    public String saveImage(MultipartFile image) {
 
         try {
             String contentType = image.getContentType();
@@ -35,7 +35,7 @@ public class FileStorageService {
                 throw new IllegalArgumentException("Solo se permiten imágenes");
             }
 
-            String fileName = generateUniqueFileName(originalFilename);
+            String fileName = generateUniqueFileName(image.getOriginalFilename());
             String filePath = uploadDir + fileName;
 
             Path path = Paths.get(filePath);
@@ -56,14 +56,6 @@ public class FileStorageService {
             } catch (IOException e) {
                 System.err.println("Error al eliminar archivo: " + imagePath);
             }
-        }
-    }
-
-    public byte[] getImageBytes(String imagePath) {
-        try {
-            return Files.readAllBytes(Paths.get(imagePath));
-        } catch (IOException e) {
-            throw new RuntimeException("Error al leer la imagen", e);
         }
     }
 

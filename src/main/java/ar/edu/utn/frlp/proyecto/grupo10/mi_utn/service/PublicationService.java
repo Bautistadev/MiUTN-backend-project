@@ -45,7 +45,7 @@ public class PublicationService implements PublicationServiceContract {
     public Publication save(PublicationRequestDTO publicationRequestDTO) {
         Publication publication = publicationMapper.toEntity(publicationRequestDTO);
         if (publicationRequestDTO.getImage() != null && !publicationRequestDTO.getImage().isEmpty()) {
-            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage(), "publication");
+            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage());
             publication.setImagePath(imagePath);
         }
 
@@ -63,7 +63,7 @@ public class PublicationService implements PublicationServiceContract {
         }
 
         if (publicationRequestDTO.getImage() != null && !publicationRequestDTO.getImage().isEmpty()) {
-            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage(), "publication");
+            String imagePath = fileStorageService.saveImage(publicationRequestDTO.getImage());
             publication.setImagePath(imagePath);
         } else {
             publication.setImagePath(null);
