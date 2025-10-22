@@ -82,6 +82,7 @@ public class UserService implements UserServiceContract {
     }
 
     public UserDTO findByEmail(String email) throws BadRequestException {
+        System.out.println(email);
         return this.userRepository.findByPersonEmail(email)
                 .map(this.userMapper::toDTO)
                 .orElseThrow(BadRequestException::new);
