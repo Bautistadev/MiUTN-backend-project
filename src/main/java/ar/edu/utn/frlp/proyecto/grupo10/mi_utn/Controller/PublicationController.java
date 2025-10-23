@@ -68,7 +68,7 @@ public class PublicationController {
 
             // Devuelve la imagen descargable
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imagePath.getFileName())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + imagePath.getFileName())
                     .contentType(MediaType.parseMediaType(mimeType))
                     .body(imageBytes);
 
