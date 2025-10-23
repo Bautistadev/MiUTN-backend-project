@@ -26,7 +26,14 @@ public class PublicationService implements PublicationServiceContract {
 
     @Override
     public PublicationDTO findById(Long id) throws BadRequestException {
-        return publicationRepository.findById(id).map(publicationMapper::toDTO).orElseThrow(BadRequestException::new);
+        return publicationRepository.findById(id)
+                .map(publicationMapper::toDTO)
+                .orElseThrow(BadRequestException::new);
+    }
+
+    public byte[] getImage(String path){
+        byte[] imageBytes = fileStorageService.getImageAsBytes(path);
+        return imageBytes;
     }
 
     @Override

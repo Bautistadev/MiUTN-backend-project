@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.UUID;
 
 
@@ -59,6 +60,43 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Obtiene una imagen como arreglo de bytes.
+     */
+    public byte[] getImageAsBytes(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
+        }
+        try {
+            Path path = Paths.get(imagePath);
+            if (!Files.exists(path)) {
+                throw new RuntimeException("La imagen no existe: " + imagePath);
+            }
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al leer la imagen: " + imagePath, e);
+        }
+    }
+
+    /**
+     * Obtiene una imagen codificada en Base64 (útil para enviar en JSON).
+     */
+    public String getImageAsBase64(String imagePath) {
+        byte[] bytes = getImageAsBytes(imagePath);
+        if (bytes == null) {
+            return null;
+        }
+        String mimeType = "image/png";
+        try {
+            Path path = Paths.get(imagePath);
+            mimeType = Files.probeContentType(path);
+        } catch (IOException ignored) {}
+        return "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
+     * Genera un nombre único para cada archivo.
+     */
     private String generateUniqueFileName(String originalFilename) {
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {

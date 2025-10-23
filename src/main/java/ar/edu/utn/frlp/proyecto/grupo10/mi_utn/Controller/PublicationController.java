@@ -7,11 +7,15 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Publication;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.PublicationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -28,6 +32,8 @@ public class PublicationController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+
 
     @GetMapping("/findAll")
     public ResponseEntity<List<PublicationDTO>> findAll(){
@@ -46,6 +52,30 @@ public class PublicationController {
         Publication response = publicationService.update(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downloadImage(@RequestParam String path) {
+        try {
+            byte[] imageBytes = this.publicationService.getImage(path);
+
+            // Detecta el tipo MIME (png, jpg, etc.)
+            Path imagePath = Paths.get(path);
+            String mimeType = Files.probeContentType(imagePath);
+            if (mimeType == null) {
+                mimeType = "application/octet-stream";
+            }
+
+            // Devuelve la imagen descargable
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imagePath.getFileName())
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .body(imageBytes);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
     }
 
     @DeleteMapping("/delete")
