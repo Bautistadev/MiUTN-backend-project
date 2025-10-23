@@ -47,8 +47,8 @@ public class PublicationController {
         return ResponseEntity.status(HttpStatus.OK).body(publication);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Publication> update(@RequestBody @Valid PublicationRequestDTO request) throws BadRequestException{
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Publication> update(@ModelAttribute @Valid PublicationRequestDTO request) throws BadRequestException{
         Publication response = publicationService.update(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
