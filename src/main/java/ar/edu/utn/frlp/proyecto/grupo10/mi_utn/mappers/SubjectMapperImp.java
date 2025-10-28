@@ -4,9 +4,13 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.request.SubjectRequestDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.*;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.SubjectMapper;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.*;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CareerRepository;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CommissionRespository;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.ProfessorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,6 +20,9 @@ import java.util.stream.Collectors;
 public class SubjectMapperImp implements SubjectMapper {
 
     private CommissionMapperImp commissionMapperImp;
+    private ProfessorRepository professorRepository;
+    private CareerRepository careerRepository;
+    private CommissionRespository commissionRespository;
 
 
     @Override
@@ -47,22 +54,35 @@ public class SubjectMapperImp implements SubjectMapper {
     @Override
     public Subject toEntity(SubjectRequestDTO subjectRequestDTO) {
 
-        List<Schedule> scheduleDTO = subjectRequestDTO.getSchedule()
+
+
+        Set<Professor> professors = subjectRequestDTO.getProfessorsId()
+                .stream()
+                .map(e-> this.professorRepository.getReferenceById(e)).collect(Collectors.toSet());
+
+        Subject subject = Subject.builder()
+                .name(subjectRequestDTO.getName())
+                .type(subjectRequestDTO.getType())
+                .career(this.careerRepository.getReferenceById(subjectRequestDTO.getCareerId()))
+                .professors(professors)
+                .year(subjectRequestDTO.getYear())
+                .build();
+
+        List<Schedule> schedule = subjectRequestDTO.getSchedule()
                 .stream()
                 .map(e->Schedule.builder()
                         .day(e.getDay())
                         .startTime(e.getStartTime())
                         .endTime(e.getEndTime())
+                        .classroom(e.getClassroom())
+                        .subject(subject)
+                        .professor(professors.stream().findFirst().orElse(null))
+                        .commission(this.commissionRespository.getReferenceById(subjectRequestDTO.getCommissionId()))
                         .build())
                 .toList();
 
-        return null;/*Subject.builder()
-                .name(subjectRequestDTO.getName())
-                .commission(Commission.builder().id(subjectRequestDTO.getCommissionId()).build())
-                .year(subjectRequestDTO.getYear())
-                .type(subjectRequestDTO.getType())
-                .schedule(scheduleDTO)
-                .build();*/
+        subject.setSchedule(schedule);
+        return subject;
     }
 
     @Override
@@ -70,11 +90,9 @@ public class SubjectMapperImp implements SubjectMapper {
         List<ScheduleDTO> schedules = subject.getSchedule()
                 .stream().map(e-> ScheduleDTO.builder()
                         .id(e.getId())
-                        .date(e.getDate())
-                        .dateUpdate(e.getDateUpdate())
-                        .dateDeleted(e.getDateDeleted())
                         .day(e.getDay())
                         .commission(this.commissionMapperImp.toDTO(e.getCommission()))
+                        .classroom(e.getClassroom())
                         .endTime(e.getEndTime())
                         .startTime(e.getStartTime())
                         .build())
@@ -83,9 +101,6 @@ public class SubjectMapperImp implements SubjectMapper {
         CareerDTO careerDTO = CareerDTO.builder()
                 .id(subject.getCareer().getId())
                 .name(subject.getCareer().getName())
-                .date(subject.getCareer().getDate())
-                .dateDeleted(subject.getCareer().getDateDeleted())
-                .dateUpdate(subject.getCareer().getDateUpdate())
                 .build();
 
         Set<ProfessorDTO> professorDTOS = subject.getProfessors()
@@ -93,9 +108,7 @@ public class SubjectMapperImp implements SubjectMapper {
                         .id(e.getId())
                         .name(e.getName())
                         .lastname(e.getLastname())
-                        .date(e.getDate())
-                        .dateUpdate(e.getDateUpdate())
-                        .dateDeleted(e.getDateDeleted())
+                        .email(e.getEmail())
                         .build())
                 .collect(Collectors.toSet());
 

@@ -17,7 +17,4 @@ import java.time.LocalDateTime;
 public class CareerDTO {
     private Long id;
     private String name;
-    private LocalDateTime date;
-    private LocalDateTime dateUpdate;
-    private LocalDateTime dateDeleted;
 }

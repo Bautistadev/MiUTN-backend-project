@@ -13,9 +13,6 @@ public class CareerMapperImp implements CareerMapper {
         return Career.builder()
                 .id(careerDTO.getId())
                 .name(careerDTO.getName())
-                .date(careerDTO.getDate())
-                .dateUpdate(careerDTO.getDateUpdate())
-                .dateDeleted(careerDTO.getDateDeleted())
                 .build();
     }
 
@@ -31,9 +28,6 @@ public class CareerMapperImp implements CareerMapper {
         return CareerDTO.builder()
                 .name(career.getName())
                 .id(career.getId())
-                .dateDeleted(career.getDateDeleted())
-                .dateUpdate(career.getDateUpdate())
-                .date(career.getDate())
                 .build();
     }
 }

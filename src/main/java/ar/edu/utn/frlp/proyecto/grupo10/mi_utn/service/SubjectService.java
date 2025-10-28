@@ -13,12 +13,15 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Professor;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Schedule;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Subject;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CommissionRespository;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.SchedulesRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.SubjectRepository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.SubjectServiceContract;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +37,7 @@ public class SubjectService implements SubjectServiceContract {
 
     private SubjectRepository subjectRepository;
     private SubjectMapper subjectMapper;
+    private SchedulesRepository schedulesRepository;
     private ProfessorService professorService;
     private CommissionRespository commissionRespository;
     private CareerService careerService;
@@ -80,11 +84,13 @@ public class SubjectService implements SubjectServiceContract {
         if(!this.careerService.existsById(subjectRequestDTO.getCareerId()))
             throw new IllegalArgumentException("Carrera no existente id: "+subjectRequestDTO.getCareerId());
 
-        this.subjectRepository.save(this.subjectMapper.toEntity(subjectRequestDTO));
+        Subject subject = this.subjectMapper.toEntity(subjectRequestDTO);
+        this.subjectRepository.save(subject);
 
     }
 
     @Override
+    @Transactional
     public void update(SubjectDTO subjectDTO) throws BadRequestException {
         //VALIDAMOS QUE NO EXISTA LA MATERIA
         if(this.subjectRepository.existsByName(subjectDTO.getName()))
@@ -106,17 +112,41 @@ public class SubjectService implements SubjectServiceContract {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) throws BadRequestException {
         if(!this.subjectRepository.existsById(id))
             throw new BadRequestException("Registro no existente");
 
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
+
+        subject.getProfessors().forEach(p -> p.getSubjects().remove(subject));
+        subject.getProfessors().clear();
+
+        subjectRepository.delete(subject);
+        this.schedulesRepository.deleteBySubjectId(id);
         this.subjectRepository.deleteById(id);
     }
 
     @Override
     public List<SubjectDTO> findByCommissionId(Long commissionId, Integer from, Integer to) {
         if((from == null || from == 0) && (to == null || to == 0))
-            return this.subjectRepository.findByScheduleCommissionId(commissionId).stream().map(subjectMapper::toDTO).toList();
+            return this.subjectRepository.findByScheduleCommissionId(commissionId)
+                    .stream()
+                    .map(subjectMapper::toDTO)
+                    .filter(e -> e.getSchedule() != null &&
+                            e.getSchedule().stream()
+                            .anyMatch(i -> i.getCommission() != null &&
+                            i.getCommission().getId().equals(commissionId)))
+                    .map(e -> {
+                        // 🔹 Filtra los horarios dentro de la materia para dejar solo la comisión indicada
+                        e.setSchedule(
+                        e.getSchedule().stream()
+                        .filter(i -> i.getCommission() != null && i.getCommission().getId().equals(commissionId)).toList()
+                        );
+                        return e;
+                    })
+                    .toList();
         if(from == null || from == 0){
             Pageable pageable = PageRequest.of(0,to);
             return this.subjectRepository.findByScheduleCommissionId(commissionId,pageable).stream().map(subjectMapper::toDTO).toList();
@@ -215,6 +245,7 @@ public class SubjectService implements SubjectServiceContract {
                 .classroom(extractAula(schedules))
                 .professor(extractProfesor(schedules))
                 .dates(buildSchedules(schedules))
+                .email(extractProfessorEmail(schedules))
                 .build();
     }
 
@@ -234,6 +265,18 @@ public class SubjectService implements SubjectServiceContract {
                 })
                 .findFirst()
                 .orElse("Sin Profesor");
+    }
+
+    private String extractProfessorEmail(List<Schedule> schedules){
+        return schedules.stream()
+                .map(s -> {
+                    String email = s.getProfessor().getEmail();
+                    if (email != null)
+                        return email;
+                    return "Sin email";
+                })
+                .findFirst()
+                .orElse("Sin email");
     }
 
     private List<ScheduleMapDTO> buildSchedules(List<Schedule> schedules) {

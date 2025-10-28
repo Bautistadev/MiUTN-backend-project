@@ -15,5 +15,6 @@ public class commissionMapDTO {
     private String commission;
     private String classroom;
     private String professor;
+    private String email;
     private List<ScheduleMapDTO> dates;
 }

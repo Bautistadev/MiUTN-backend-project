@@ -28,9 +28,6 @@ public class CommissionMapperImp implements CommissionMapper {
         return CommissionDTO.builder()
                 .id(commission.getId())
                 .name(commission.getName())
-                .date(commission.getDate())
-                .dateUpdate(commission.getDateUpdate())
-                .dateDeleted(commission.getDateDeleted())
                 .build();
     }
 }

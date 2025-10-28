@@ -36,9 +36,6 @@ public class ScheduleMapperImp implements ScheduleMapper {
                 .day(schedule.getDay())
                 .endTime(schedule.getEndTime())
                 .startTime(schedule.getStartTime())
-                .date(schedule.getDate())
-                .dateUpdate(schedule.getDateUpdate())
-                .dateDeleted(schedule.getDateDeleted())
                 .build();
     }
 }

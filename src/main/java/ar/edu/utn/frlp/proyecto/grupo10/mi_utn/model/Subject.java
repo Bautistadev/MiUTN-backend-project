@@ -18,8 +18,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql="UPDATE Subject SET delete_date = current_timestamp WHERE id = ?")
-@SQLRestriction("delete_date IS NULL")
 public class Subject {
 
     @Id
@@ -33,20 +31,12 @@ public class Subject {
     private String type;
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedule;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id",nullable = false)
     private Career career;
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "subjects",fetch = FetchType.EAGER)
     private Set<Professor> professors;
-    @CreationTimestamp
-    @Column(updatable = false,name = "date")
-    private LocalDateTime date;
-    @UpdateTimestamp
-    @Column(name = "update_date")
-    private LocalDateTime dateUpdate;
-    @Column(name="delete_date")
-    private LocalDateTime dateDeleted;
 
 }
