@@ -24,16 +24,18 @@ public class AuthService implements AuthServiceInterface {
 
     @Override
     public LoginResponseDTO attemptUserPasswordLogin(String user, String email, String password) throws LoginException, UnAuthorizedException, BadRequestException {
-        if(this.userService.existsByUsername(user)) {
-            UserDTO u = this.userService.findByUsername(user);
-            if(!passwordEncoder.matches(password,u.getPassword()))
-                throw new BadCredentialssException("Bad credentials exception");
-            return LoginResponseDTO.builder()
-                    .accessToken(jwtTokenProvider.generateToken(u))
-                    .build();
+        if(user != null){
+            if(this.userService.existsByUsername(user)) {
+                UserDTO u = this.userService.findByUsername(user);
+                if(!passwordEncoder.matches(password,u.getPassword()))
+                    throw new BadCredentialssException("Bad credentials exception");
+                return LoginResponseDTO.builder()
+                        .accessToken(jwtTokenProvider.generateToken(u))
+                        .build();
+            }
         }
         if(this.userService.existsByEmail(email)){
-            UserDTO u = this.userService.findByEmail(user);
+            UserDTO u = this.userService.findByEmail(email);
             if(!passwordEncoder.matches(password,u.getPassword()))
                 throw new BadCredentialssException("Bad credentials exception");
             return LoginResponseDTO.builder()

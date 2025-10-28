@@ -23,6 +23,7 @@ public class ProfessorMapperImp implements ProfessorMapper {
         return Professor.builder()
                 .name(profesorRequestDTO.getName())
                 .lastname(profesorRequestDTO.getLastname())
+                .email(profesorRequestDTO.getEmail())
                 .build();
     }
 

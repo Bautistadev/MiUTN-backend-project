@@ -65,7 +65,6 @@ public class SubjectMapperImp implements SubjectMapper {
                 .type(subjectRequestDTO.getType())
                 .career(this.careerRepository.getReferenceById(subjectRequestDTO.getCareerId()))
                 .professors(professors)
-                .date(LocalDateTime.now())
                 .year(subjectRequestDTO.getYear())
                 .build();
 
@@ -76,7 +75,6 @@ public class SubjectMapperImp implements SubjectMapper {
                         .startTime(e.getStartTime())
                         .endTime(e.getEndTime())
                         .classroom(e.getClassroom())
-                        .date(LocalDateTime.now())
                         .subject(subject)
                         .professor(professors.stream().findFirst().orElse(null))
                         .commission(this.commissionRespository.getReferenceById(subjectRequestDTO.getCommissionId()))

@@ -13,4 +13,5 @@ public interface SchedulesRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT DISTINCT s.classroom FROM Schedule s")
     List<String> findAllDistinctClassrooms();
+    public void deleteBySubjectId(Long id);
 }
