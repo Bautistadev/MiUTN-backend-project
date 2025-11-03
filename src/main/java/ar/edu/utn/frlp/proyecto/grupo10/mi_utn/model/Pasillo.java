@@ -20,11 +20,11 @@ public class Pasillo {
     @Column(nullable = false)
     private String nombre;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "desde_nodo_id", nullable = false)
     private Nodo desde;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "hasta_nodo_id", nullable = false)
     private Nodo hasta;
 

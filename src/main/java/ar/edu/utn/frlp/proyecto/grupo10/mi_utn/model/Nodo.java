@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
 public abstract class Nodo {
     @Id
@@ -35,18 +34,18 @@ public abstract class Nodo {
     private String planoId;
 
     // 🔥 USAR LA ENTIDAD CAREER EXISTENTE
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id", nullable = false)
     private Career career;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "floor_id", nullable = false)
     private Floor floor;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double coordenadaX;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double coordenadaY;
 
     @CreationTimestamp
