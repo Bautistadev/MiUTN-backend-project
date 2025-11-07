@@ -2,11 +2,7 @@ package ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -40,4 +36,6 @@ public class Professor {
     private List<Schedule> schedules;
     @Column(name = "email")
     private String email;
+    @Column(name = "legajo")
+    private Integer legajo;
 }

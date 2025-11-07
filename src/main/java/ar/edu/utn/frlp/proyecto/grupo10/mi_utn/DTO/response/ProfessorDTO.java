@@ -16,4 +16,5 @@ public class ProfessorDTO {
     private String name;
     private String lastname;
     private String email;
+    private Integer legajo;
 }
