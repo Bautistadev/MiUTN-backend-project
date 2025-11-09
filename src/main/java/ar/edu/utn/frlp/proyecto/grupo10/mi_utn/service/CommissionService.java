@@ -5,6 +5,7 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.DTO.response.CommissionDTO;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.BadRequestException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.exceptions.customs.ConflictException;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.mappers.Contract.CommissionMapper;
+import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Commission;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.repository.CommissionRespository;
 import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.service.contract.CommissionServiceContract;
 import lombok.AllArgsConstructor;
@@ -20,11 +21,12 @@ public class CommissionService implements CommissionServiceContract {
     private CommissionMapper commissionMapper;
 
     @Override
-    public void save(CommissionRequestDTO commissionRequestDTO) {
+    public CommissionDTO save(CommissionRequestDTO commissionRequestDTO) {
         if(this.commissionRespository.existsByName(commissionRequestDTO.getName()))
             throw new ConflictException("Registro existente");
 
-        this.commissionRespository.save(this.commissionMapper.toEntity(commissionRequestDTO));
+        Commission commission = this.commissionRespository.save(this.commissionMapper.toEntity(commissionRequestDTO));
+        return commissionMapper.toDTO(commission);
     }
 
     @Override

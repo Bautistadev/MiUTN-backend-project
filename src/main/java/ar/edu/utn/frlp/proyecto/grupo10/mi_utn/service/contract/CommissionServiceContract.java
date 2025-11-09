@@ -8,7 +8,7 @@ import ar.edu.utn.frlp.proyecto.grupo10.mi_utn.model.Commission;
 import java.util.List;
 
 public interface CommissionServiceContract {
-    public void save(CommissionRequestDTO commissionRequestDTO);
+    public CommissionDTO save(CommissionRequestDTO commissionRequestDTO);
     public void update(CommissionDTO commissionDTO) throws BadRequestException;
     public void delete(Long id) throws BadRequestException;
     public List<CommissionDTO> findAll();

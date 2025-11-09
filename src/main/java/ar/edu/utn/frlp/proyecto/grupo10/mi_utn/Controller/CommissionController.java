@@ -46,9 +46,9 @@ public class CommissionController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<Void> save(@RequestBody @Valid CommissionRequestDTO commissionRequestDTO){
-        this.commissionService.save(commissionRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<CommissionDTO> save(@RequestBody @Valid CommissionRequestDTO commissionRequestDTO){
+        CommissionDTO response = this.commissionService.save(commissionRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("update")
